@@ -22,9 +22,9 @@ async def check_players_online(chnl):
         global cur_num_players
         new_num_players = server.status().players.online
         if new_num_players > cur_num_players:
-            await chnl.send(f"A player has joined the server.\nThere are now {new_num_players} players online")
+            await chnl.send(f"**A player has joined the server.**\nThere are now **{new_num_players}** players online")
         elif new_num_players < cur_num_players:
-            await chnl.send(f"A player has left the server.\nThere are now {new_num_players} players online")
+            await chnl.send(f"**A player has left the server.**\nThere are now **{new_num_players}** players online")
         cur_num_players = new_num_players
         await asyncio.sleep(10)
 
