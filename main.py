@@ -21,10 +21,15 @@ async def check_players_online(chnl):
     while will_check_players:
         global cur_num_players
         new_num_players = server.status().players.online
+        embedMsg = discord.Embed()
         if new_num_players > cur_num_players:
-            await chnl.send(f"**A player has joined the server.**\nThere are now **{new_num_players}** players online")
+            embedMsg.title = "A player has joined the server."
+            embedMsg.description = f"There are now **{new_num_players}** players online"
+            await chnl.send(embed = embedMsg)
         elif new_num_players < cur_num_players:
-            await chnl.send(f"**A player has left the server.**\nThere are now **{new_num_players}** players online")
+            embedMsg.title = "A player has left the server."
+            embedMsg.description = f"There are now **{new_num_players}** players online"
+            await chnl.send(embed = embedMsg)
         cur_num_players = new_num_players
         await asyncio.sleep(10)
 
