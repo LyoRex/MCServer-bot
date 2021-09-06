@@ -137,15 +137,15 @@ async def on_message(message):
         await message.channel.send("Restart Check is now disabled...")
     elif message.content == "$updates on":
         user = message.author
-        if not user in player_update_list:
-            message.channel.send("**You are already in the updates list!**")
+        if user in player_update_list:
+            await message.channel.send("**You are already in the updates list!**")
             return
         user.send("You will now receive updates when there is a player online!")
         player_update_list.append(user)
     elif message.content == "$updates off":
         user = message.author
         if not user in player_update_list:
-            message.channel.send("**You are not in the updates list!**")
+            await message.channel.send("**You are not in the updates list!**")
             return
         user.send("You will now stop receiving updates on the player activity of the server!")
         player_update_list.remove(user)
