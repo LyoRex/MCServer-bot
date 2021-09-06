@@ -51,6 +51,7 @@ async def check_players_online(chnl):
             await chnl.send("Could not reach the server...")
             if restart_check == True:
                 client.loop.create_task(restart_check_players(chnl))
+            return
 
 @client.event
 async def on_ready():
