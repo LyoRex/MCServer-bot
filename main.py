@@ -22,6 +22,7 @@ def get_players():
 async def restart_check_players(chnl):
     global restart_check
     await asyncio.sleep(10)
+    await chnl.send("Attempting to restart player join/leave checking...")
     try:
         client.loop.create_task(check_players_online(chnl))
     except ConnectionRefusedError:
