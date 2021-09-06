@@ -15,6 +15,8 @@ restart_check = False
 max_restart_tries = 3
 cur_restart_tries = 0
 
+player_update_list = []
+
 def get_players():
     query = server.query()
     list_players = query.players.names
@@ -53,10 +55,21 @@ async def check_players_online(chnl):
                 embedMsg.title = "A player has joined the server."
                 embedMsg.description = f"There are now **{new_num_players}** players online"
                 await chnl.send(embed = embedMsg)
+                if cur_num_players == 0:
+                    playerEmbed = discord.Embed()
+                    playerEmbed.title = "There are players online!"
+                    playerEmbed.description = f"There are now **{new_num_players}** players online"
+                    for user in player_update_list:
+                        await user.send(embed = playerEmbed)
             elif new_num_players < cur_num_players:
                 embedMsg.title = "A player has left the server."
                 embedMsg.description = f"There are now **{new_num_players}** players online"
                 await chnl.send(embed = embedMsg)
+                if new_num_players == 0:
+                    playerEmbed = discord.Embed()
+                    playerEmbed.title = "There are now no players online!"
+                    for user in player_update_list:
+                        await user.send(embed = playerEmbed)
             cur_num_players = new_num_players
             await asyncio.sleep(10)
         except ConnectionRefusedError:
@@ -122,6 +135,20 @@ async def on_message(message):
             return
         restart_check = False
         await message.channel.send("Restart Check is now disabled...")
+    elif message.content == "$updates on":
+        user = message.author
+        if not user in player_update_list:
+            message.channel.send("**You are already in the updates list!**")
+            return
+        user.send("You will now receive updates when there is a player online!")
+        player_update_list.append(user)
+    elif message.content == "$updates off":
+        user = message.author
+        if not user in player_update_list:
+            message.channel.send("**You are not in the updates list!**")
+            return
+        user.send("You will now stop receiving updates on the player activity of the server!")
+        player_update_list.remove(user)
     else:
         print("DONE")
 
