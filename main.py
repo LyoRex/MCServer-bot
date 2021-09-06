@@ -12,7 +12,7 @@ TOKEN = os.getenv('TOKEN')
 cur_num_players = 0
 will_check_players = False
 restart_check = False
-max_restart_tries = 5
+max_restart_tries = 3
 cur_restart_tries = 0
 
 def get_players():
@@ -21,15 +21,18 @@ def get_players():
     return list_players
 
 async def restart_check_players(chnl):
+    global will_check_players
     global restart_check
     global cur_restart_tries
     global max_restart_tries
     if cur_restart_tries >= max_restart_tries:
         await chnl.send("Could not restart player join/leave checking. Attempts have exceeded the max...")
         cur_restart_tries = 0
+        will_check_players = False
+        restart_check = False
         return
     await asyncio.sleep(10)
-    await chnl.send("Attempting to restart player join/leave checking...")
+    await chnl.send(f"Attempting to restart player join/leave checking. **Attempt {cur_restart_tries}:**")
     try:
         client.loop.create_task(check_players_online(chnl))
         await chnl.send("Restarted player join/leave checking...")
@@ -57,12 +60,12 @@ async def check_players_online(chnl):
             cur_num_players = new_num_players
             await asyncio.sleep(10)
         except ConnectionRefusedError:
-            await chnl.send("Could not reach the server...")
+            await chnl.send("**Could not reach the server!**")
             if restart_check == True:
                 client.loop.create_task(restart_check_players(chnl))
             return
         except OSError:
-            await chnl.send("Could not reach the server...")
+            await chnl.send("**Could not reach the server!**")
             if restart_check == True:
                 client.loop.create_task(restart_check_players(chnl))
             return
