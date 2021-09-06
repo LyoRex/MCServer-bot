@@ -25,6 +25,7 @@ async def restart_check_players(chnl):
     await chnl.send("Attempting to restart player join/leave checking...")
     try:
         client.loop.create_task(check_players_online(chnl))
+        await chnl.send("Restarted player join/leave checking...")
     except:
         if restart_check == True:
             client.loop.create_task(restart_check_players(chnl))
@@ -53,7 +54,9 @@ async def check_players_online(chnl):
                 client.loop.create_task(restart_check_players(chnl))
             return
         except OSError:
-            client.loop.create_task(restart_check_players(chnl))
+            await chnl.send("Could not reach the server...")
+            if restart_check == True:
+                client.loop.create_task(restart_check_players(chnl))
             return
 
 @client.event
@@ -72,7 +75,6 @@ async def on_message(message):
     if message.content == '$players':
         try:
             status = server.status()
-            print(get_players)
             await message.channel.send(f"There are {status.players.online} players online")
             # list_players = get_players()
             # bold_names = ['**' + name + '**' for name in list_players]
