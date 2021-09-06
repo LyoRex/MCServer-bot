@@ -52,6 +52,9 @@ async def check_players_online(chnl):
             if restart_check == True:
                 client.loop.create_task(restart_check_players(chnl))
             return
+        except OSError:
+            client.loop.create_task(restart_check_players(chnl))
+            return
 
 @client.event
 async def on_ready():
