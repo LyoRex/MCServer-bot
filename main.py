@@ -25,7 +25,7 @@ async def restart_check_players(chnl):
     await chnl.send("Attempting to restart player join/leave checking...")
     try:
         client.loop.create_task(check_players_online(chnl))
-    except ConnectionRefusedError:
+    except:
         if restart_check == True:
             client.loop.create_task(restart_check_players(chnl))
         else:
