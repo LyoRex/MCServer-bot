@@ -68,6 +68,8 @@ async def check_players_online(chnl):
                 embedMsg.title = "A player has left the server."
                 embedMsg.description = f"There are now **{new_num_players}** players online"
                 await chnl.send(embed = embedMsg)
+                for user in player_all_updates_list:
+                    await user.send(embed = embedMsg)
                 if new_num_players == 0:
                     playerEmbed = discord.Embed()
                     playerEmbed.title = "There are now no players online!"
