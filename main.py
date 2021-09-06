@@ -11,15 +11,28 @@ client = discord.Client()
 TOKEN = os.getenv('TOKEN')
 cur_num_players = 0
 will_check_players = False
+restart_check = False
+
 
 def get_players():
     query = server.query()
     list_players = query.players.names
     return list_players
 
+async def restart_check_players(chnl):
+    global restart_check
+    await asyncio.sleep(10)
+    try:
+        client.loop.create_task(check_players_online(chnl))
+    except ConnectionRefusedError:
+        if restart_check == True:
+            client.loop.create_task(restart_check_players(chnl))
+        else:
+            return
+
 async def check_players_online(chnl):
+    global cur_num_players
     while will_check_players:
-        global cur_num_players
         new_num_players = server.status().players.online
         embedMsg = discord.Embed()
         if new_num_players > cur_num_players:
@@ -45,9 +58,11 @@ async def on_message(message):
         return
 
     global will_check_players
+    global restart_check
     if message.content == '$players':
         try:
             status = server.status()
+            print(get_players)
             await message.channel.send(f"There are {status.players.online} players online")
             # list_players = get_players()
             # bold_names = ['**' + name + '**' for name in list_players]
@@ -59,12 +74,33 @@ async def on_message(message):
         except:
             await message.channel.send("Server could not be reached...")
     elif message.content == '$mp on':
-        will_check_players = True
-        client.loop.create_task(check_players_online(message.channel))
-        await message.channel.send("Now checking when players join or leave...")
+        try:
+            if will_check_players:
+                await message.channel.send("Player join/leave tracking is already enabled...")
+                return
+            will_check_players = True
+            client.loop.create_task(check_players_online(message.channel))
+            await message.channel.send("Now checking when players join or leave...")
+        except ConnectionRefusedError:
+            await message.channel.send("Could not reach the server...")
+            client.loop.create_task(restart_check_players(message.channel))
+
     elif message.content == '$mp off':
+        if not will_check_players:
+            await message.channel.send("Player join/leave tracking is already disabled...")
+            return
         will_check_players = False
         await message.channel.send("Turning off...")
+    elif message.content == "$rc on":
+        if restart_check:
+            await message.channel.send("Restart Check is already enabled...")
+            return
+        restart_check = True
+    elif message.content == "$rc off":
+        if not restart_check:
+            await message.channel.send("Restart Check is already disabled...")
+            return
+        restart_check = False
     else:
         print("DONE")
 
