@@ -96,11 +96,13 @@ async def on_message(message):
             await message.channel.send("Restart Check is already enabled...")
             return
         restart_check = True
+        await message.channel.send("Restart Check is now enabled...")
     elif message.content == "$rc off":
         if not restart_check:
             await message.channel.send("Restart Check is already disabled...")
             return
         restart_check = False
+        await message.channel.send("Restart Check is now disabled...")
     else:
         print("DONE")
 
