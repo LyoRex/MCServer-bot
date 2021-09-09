@@ -90,7 +90,7 @@ async def check_players_online(chnl):
 
 @client.event
 async def on_ready():
-    print("MCServer-chan is up and running...")
+    print("MCServer-chan is up and running uwu...")
     global cur_num_players
     cur_num_players = server.status().players.online
 
@@ -101,6 +101,8 @@ async def on_message(message):
 
     global will_check_players
     global restart_check
+    if not message.content.startswith('$'):
+        return
     if message.content == '$players':
         try:
             status = server.status()
@@ -169,7 +171,7 @@ async def on_message(message):
         if user in player_all_updates_list:
             player_all_updates_list.remove(user)
     else:
-        print("DONE")
+        print("COMMAND IS NOT REGISTERED")
 
 if __name__ == '__main__':
     client.run(TOKEN)
