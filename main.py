@@ -30,19 +30,23 @@ async def restart_check_players(chnl):
     global max_restart_tries
     if cur_restart_tries >= max_restart_tries:
         await chnl.send("Could not restart player join/leave checking. Attempts have exceeded the max...")
+        print("Could not restart player join/leave checking. Attempts have exceeded the max...")
         cur_restart_tries = 0
         will_check_players = False
         restart_check = False
         return
     await asyncio.sleep(10)
     await chnl.send(f"Attempting to restart player join/leave checking. **Attempt {cur_restart_tries}:**")
+    print(f"Attempting to restart player join/leave checking. **Attempt {cur_restart_tries}:**")
     try:
         client.loop.create_task(check_players_online(chnl))
         await chnl.send("Restarted player join/leave checking...")
+        print("Restarted player join/leave checking...")
         cur_restart_tries = cur_restart_tries + 1
     except:
         if restart_check == True:
             client.loop.create_task(restart_check_players(chnl))
+            print("Retrying restart check players function...")
         else:
             return
 
@@ -170,6 +174,16 @@ async def on_message(message):
             player_update_list.remove(user)
         if user in player_all_updates_list:
             player_all_updates_list.remove(user)
+    elif message.content == "$updatelist":
+        update_list_embed = discord.Embed()
+        update_list_embed.title = "Users in Updates List"
+        for user in player_update_list:
+            update_list_embed.description += (user.name + "\n")
+        await message.channel.send(embed=update_list_embed)
+        all_update_list_embed = discord.Embed()
+        all_update_list_embed.title = "Users in Full Updates List"
+        for user in player_all_updates_list:
+            all_update_list_embed.description += (user.name + "\n")
     else:
         print("COMMAND IS NOT REGISTERED")
 
