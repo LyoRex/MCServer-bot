@@ -184,6 +184,7 @@ async def on_message(message):
         all_update_list_embed.title = "Users in Full Updates List"
         for user in player_all_updates_list:
             all_update_list_embed.description += (user.name + "\n")
+        await message.channel.send(embed=all_update_list_embed)
     else:
         print("COMMAND IS NOT REGISTERED")
 
