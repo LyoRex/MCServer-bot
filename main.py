@@ -177,11 +177,13 @@ async def on_message(message):
     elif message.content == "$updatelist":
         update_list_embed = discord.Embed()
         update_list_embed.title = "Users in Updates List"
+        update_list_embed.description = f""
         for user in player_update_list:
             update_list_embed.description += (user.name + "\n")
         await message.channel.send(embed=update_list_embed)
         all_update_list_embed = discord.Embed()
         all_update_list_embed.title = "Users in Full Updates List"
+        all_update_list_embed.description = f""
         for user in player_all_updates_list:
             all_update_list_embed.description += (user.name + "\n")
         await message.channel.send(embed=all_update_list_embed)
